@@ -41,6 +41,7 @@ export class AuthService {
         email,
         password: hashedPassword,
 
+
       }
     })
 

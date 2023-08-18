@@ -88,7 +88,7 @@ export class ProductService {
   }
 
 
-  private isObjectIdValid(id: string) {
+  public isObjectIdValid(id: string) {
     let ObjectId = mongoose.Types.ObjectId;
     if (ObjectId.isValid(id)) {
       if ((String)(new ObjectId(id)) === id)
