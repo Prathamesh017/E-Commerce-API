@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 export class ProductService {
 
   constructor(private prisma: PrismaService) { }
-  public async addProduct(title: string, description: string, price: number, rating: number, stock: number, brand: string, category: string, secretKey: string): Promise<responseInterface> {
+  public async addProduct(title: string, description: string, price: number, rating: number, stock: number, brand: string, category: string, secretKey: string): Promise<Product> {
     if (process.env.SECRET_ADMIN_KEY !== secretKey) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
@@ -25,29 +25,18 @@ export class ProductService {
 
       }
     })
-
-
-    const result: responseInterface = {
-      message: "Product Added Successfully",
-      data: [product]
-    }
-
-    return result;
+    return product;
 
   }
 
-  public async getAllProducts(): Promise<responseInterface> {
+  public async getAllProducts(): Promise<Product[]> {
     const products = await this.prisma.product.findMany()
-    const result: responseInterface = {
-      message: "List of All Products",
-      size: products.length,
-      data: products
-    }
 
-    return result;
+
+    return products;
   }
 
-  public async getProductById(id: string): Promise<responseInterface> {
+  public async getProductById(id: string): Promise<Product> {
 
     if (!this.isObjectIdValid(id)) {
       throw new BadRequestException("Invalid Id")
@@ -61,15 +50,10 @@ export class ProductService {
       throw new NotFoundException("Product Not Found")
     }
 
-    const result: responseInterface = {
-      message: "Product Details",
-      data: [product]
-    }
-
-    return result;
+    return product;
   }
 
-  public async getAllCategories(): Promise<responseInterface> {
+  public async getAllCategories(): Promise<String[]> {
     const allCategories = await this.prisma.product.findMany({
       distinct: ['category'],
       select: {
@@ -79,12 +63,7 @@ export class ProductService {
 
     const categoryArr = allCategories.map((obj) => { return obj.category })
 
-    const result: responseInterface = {
-      message: "All Categories",
-      data: categoryArr
-    }
-
-    return result;
+    return categoryArr
   }
 
 

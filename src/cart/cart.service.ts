@@ -8,7 +8,7 @@ import { ProductService } from 'src/product/product.service';
 export class CartService {
   constructor(private readonly prisma: PrismaService, private readonly productService: ProductService) {
   }
-  public async getCart(userId: string): Promise<responseInterface> {
+  public async getCartById(userId: string): Promise<Cart> {
     const cart = await this.prisma.cart.findUnique({
       where: {
         userId,
@@ -16,16 +16,12 @@ export class CartService {
     })
 
 
-    const result: responseInterface = {
-      message: "Cart Items",
-      size: cart?.items.length || 0,
-      data: [cart] || []
-    }
 
-    return result;
+
+    return cart;
   }
 
-  public async addToCart(productId: string, userId: string, quantity: number): Promise<responseInterface> {
+  public async addToCart(productId: string, userId: string, quantity: number): Promise<Cart> {
 
     if (!this.productService.isObjectIdValid(productId)) {
       throw new BadRequestException("Invalid Product  Id")
@@ -66,18 +62,13 @@ export class CartService {
 
     }
 
-    console.log(new_cart);
-    let result: responseInterface
-      = {
-      message: "Items Added to the Cart",
-      size: new_cart.items.length,
-      data: [new_cart]
-    }
 
 
-    return result;
+
+
+    return new_cart;
   }
-  public async deleteFromCart(productId: string, userId: string): Promise<responseInterface> {
+  public async deleteFromCart(productId: string, userId: string): Promise<Cart> {
 
     if (!this.productService.isObjectIdValid(productId)) {
       throw new BadRequestException("Invalid Product  Id")
@@ -112,12 +103,35 @@ export class CartService {
 
 
 
-    let result: responseInterface = {
-      message: "Items Updated to the Cart",
-      size: new_cart.items.length,
-      data: [new_cart]
+
+
+    return new_cart
+  }
+  public async emptyCartById(cartId: string) {
+
+    if (!this.productService.isObjectIdValid(cartId)) {
+      throw new BadRequestException("Invalid Id")
     }
 
-    return result
+
+
+
+
+
+
+    await this.prisma.cart.update({
+      where: {
+        id: cartId,
+      },
+      data: {
+        items: [],
+      },
+    })
+
+
+
+
+
+
   }
 }

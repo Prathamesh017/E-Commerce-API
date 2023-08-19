@@ -1,6 +1,6 @@
 export interface responseInterface {
   message: string;
-  data: [] | String[] | Product[] | Cart[]
+  data: [] | String[] | Product[] | Cart[] | Order[] | GetOrders
   size?: Number
 }
 
@@ -17,14 +17,34 @@ export interface Product {
 export interface Cart {
   id: string;
   userId: string
-  items: {
-    productId: string,
-    quantity: number,
-  }[]
+  items: Item[]
 }
 export interface UserInfo {
   id: string;
   name: string;
   iat: string;
 }
+export interface Item {
+  productId: string,
+  quantity: number,
+}
 
+export interface Order {
+  id: string;
+  userId: string
+  cartId: string
+  totalPrice: number
+  orderNumber: string
+  products: Product[]
+}
+
+export interface GetOrders {
+  cartId: string;
+  userId: string;
+  orders: {
+    id: string;
+    totalPrice: number
+    orderNumber: string
+    products: Product[]
+  }[]
+}
